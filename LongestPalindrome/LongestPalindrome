@@ -1,0 +1,146 @@
+
+https://www.geeksforgeeks.org/longest-palindrome-substring-set-1/
+
+// Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
+
+// Brute force:-
+
+/*
+The simple approach is to check each substring whether the substring is a palindrome or not. We can run three loops, the outer two loops pick all substrings one by one by fixing the corner characters, the inner loop checks whether the picked substring is palindrome or not.
+
+Time complexity: O ( n^3 )
+Auxiliary complexity: O ( 1 )
+
+*/
+
+package com.test;
+
+public class LongestPalindrome {
+	
+	public static String input = "abhhfhslhflshflshlhsflaagghhhhggaabd";
+	public static int length = 1;
+	public static String longestPalindrome = "";
+
+	
+	public static void main(String args[]) {
+		
+		if (input == null || input.length() < 1)
+			System.out.println("Error in the string");
+		else if(input.length() == 1) {
+			System.out.println("Longest palindrome is of length = 1 and palindrome is "+input);
+		}
+		else {
+		for (int i = 0 ; i < input.length() - 1; i++) {
+			for (int j = i+1 ; j < input.length(); j++) {
+				boolean result = isPalindrome(input.substring(i, j+1));
+				if (result) {
+					int len = input.substring(i, j+1).length();
+					if (len > length) {
+						length = len;
+						longestPalindrome = input.substring(i, j+1);
+					}
+				}
+			}
+		}
+		System.out.println("Longest palindrome is of length = "+length+" and palindrome is "+longestPalindrome);
+
+		}
+		
+	}
+
+	private static boolean isPalindrome(String str) {
+		String reverse = new StringBuffer(str).reverse().toString(); 
+		if (str.equals(reverse)) {
+			return true;
+		} else {
+			return false;
+		}				
+	}
+
+}
+
+
+
+// DYNAMIC Programming approach
+
+/*The time complexity can be reduced by storing results of subproblems. The idea is similar to this post. 
+We maintain a boolean table[n][n] that is filled in bottom up manner. 
+The value of table[i][j] is true, if the substring is palindrome, otherwise false. 
+To calculate table[i][j], we first check the value of table[i+1][j-1], 
+if the value is true and str[i] is same as str[j], then we make table[i][j] true. Otherwise, the value of table[i][j] is made false. */
+
+
+// Java Solution 
+public class LongestPalinSubstring  
+{ 
+    // A utility function to print a substring str[low..high] 
+    static void printSubStr(String str, int low, int high) { 
+        System.out.println(str.substring(low, high + 1)); 
+    } 
+  
+    // This function prints the longest palindrome substring 
+    // of str[]. 
+    // It also returns the length of the longest palindrome 
+    static int longestPalSubstr(String str) { 
+        int n = str.length();   // get length of input string 
+  
+        // table[i][j] will be false if substring str[i..j] 
+        // is not palindrome. 
+        // Else table[i][j] will be true 
+        boolean table[][] = new boolean[n][n]; 
+  
+        // All substrings of length 1 are palindromes 
+        int maxLength = 1; 
+        for (int i = 0; i < n; ++i) 
+            table[i][i] = true; 
+  
+        // check for sub-string of length 2. 
+        int start = 0; 
+        for (int i = 0; i < n - 1; ++i) { 
+            if (str.charAt(i) == str.charAt(i + 1)) { 
+                table[i][i + 1] = true; 
+                start = i; 
+                maxLength = 2; 
+            } 
+        } 
+          
+        // Check for lengths greater than 2. k is length 
+        // of substring 
+        for (int k = 3; k <= n; ++k) { 
+              
+                  // Fix the starting index 
+            for (int i = 0; i < n - k + 1; ++i)  
+            { 
+                // Get the ending index of substring from 
+                // starting index i and length k 
+                int j = i + k - 1; 
+  
+                // checking for sub-string from ith index to 
+                // jth index iff str.charAt(i+1) to  
+                // str.charAt(j-1) is a palindrome 
+                if (table[i + 1][j - 1] && str.charAt(i) ==  
+                                          str.charAt(j)) { 
+                    table[i][j] = true; 
+  
+                    if (k > maxLength) { 
+                        start = i; 
+                        maxLength = k; 
+                    } 
+                } 
+            } 
+        } 
+        System.out.print("Longest palindrome substring is; "); 
+        printSubStr(str, start, start + maxLength - 1); 
+          
+        return maxLength; // return length of LPS 
+    } 
+  
+    // Driver program to test above functions 
+    public static void main(String[] args) { 
+  
+        String str = "forgeeksskeegfor"; 
+        System.out.println("Length is: " +  
+                                 longestPalSubstr(str)); 
+    } 
+} 
+  
